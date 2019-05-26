@@ -12,6 +12,7 @@
 #' @param time_offset time offset (i.e. phase, in seconds) when using `time_wrap`
 #' @param multiplot integer, greater than two, or NULL, the default (see details)
 #' @param multiplot_period the duration of the period when mutiplotting (see details)
+#' @param cache whether to save the binned dt to a temporary file or not
 #' @param ... additional arguments to be passed to [ggplot2::ggplot()]
 #' @details `time_wrap` is typically used to express time relatively to the start of the the day.
 #' In other words, it can help be used to pull all days together in one representative day.
@@ -76,6 +77,7 @@ ggetho <- function(data,
                     time_offset = 0,
                     multiplot = NULL, # 1
                     multiplot_period = hours(24),
+                    cache = NULL,
                     ...){
 
 
@@ -160,6 +162,13 @@ ggetho <- function(data,
   }
     #sdt[,,.SD,keyby=c("id", "x_name")]
 
+  if(!is.null(cache)) {
+    output_table <- copy(sdt)
+    output_table$file_info <- unlist(lapply(output_table$file_info, function(x) x$path))
+    fwrite(x = output_table, file = cache)
+
+    # write.table(x = sdt, file = "/tmp/dt_bin.csv", sep = ",", quote = F, row.names = F, col.names = T)
+  }
 
   scale_x_FUN <- auto_x_time_scale(sdt[[mapping_list$x]])
   mapping_list <- lapply(mapping_list,
@@ -187,7 +196,11 @@ ggetho <- function(data,
   if(!is.null(time_wrap))
     return( out + scale_x_FUN(limits=c(- time_offset, time_wrap- time_offset)))
 
-  out + scale_x_FUN()
+  plot <- out + scale_x_FUN()
+  if (!is.null(cache))
+    return(list(plot = plot, sdt = output_table))
+  else
+    return(plot)
 }
 
 
