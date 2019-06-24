@@ -84,6 +84,9 @@ ggetho <- function(data,
   # trick to avoid NOTES from R CMD check:
   x_off = x_name = y =  . = NULL
 
+  ## Handle the time_offset and time_wrap args
+  ## In case time_offset is greater than the time_wrap
+  ## it has to be set then to its modulus
   if(time_offset != 0 & is.null(time_wrap))
     warning("Time offset only relevant when using time_wrap.
              Ignoring argument")
@@ -98,11 +101,14 @@ ggetho <- function(data,
     stop("multiplot must be an integer >1, typically 2, for double plotting")
   }
 
+  ## Handle the possible combination of aesthetics variables
+  ## Get a character vector containing the mappings so as to
+  ## implement the logic that fine tunes the plot
+  ## For example, the x axis is set as a function of what var
+  ## is mapped to it. ggetho sets the scale accordingly to hours, days, etc
   #mapping_list <- as.list(as.character(mapping))
   mapping_list <- make_labels(mapping)
   aes_names <- names(mapping_list)
-
-
   has_colour = "colour" %in% aes_names
   has_fill = "fill" %in% aes_names
 
@@ -113,9 +119,15 @@ ggetho <- function(data,
      mapping_list$colour <- col
   }
 
+
+  # by default, t is the dimension mapped to X
   if(!"x" %in% aes_names)
     mapping_list$x = "t"
 
+  # by default y is not discrete and is the variable of interest
+  # (unless z is given), in which case y is discrete
+  # and z becomes the variable of interest
+  # You cannot provide both
   x_name <- mapping_list$x
   discrete_y <- FALSE
   if("z" %in% aes_names){
@@ -127,12 +139,20 @@ ggetho <- function(data,
   else
     stop("Either `y` or `z` should be provided as variable of interest")
 
+  ## Apply the summarizing function to the data using a window size
+  ## of summary_time_window (default 30 mins)
+  ## if time_wrap, then datapoints lying in the same fraction of the 24h
+  ## are averaged, which results in a plot showing the average cycle
+  ## The summarizing function is by default mean because it computes
+  ## the fraction of TRUES (asleep) in the window
   sdt <- behavr::bin_apply_all(data,
                                var_of_interest,
                                x = x_name,
                                x_bin_length = summary_time_window,
                                wrap_x_by = time_wrap,
                                FUN = summary_FUN)
+
+  # Join data and metadata together so ggplot2 has access to everything
   sdt <- rejoin(sdt)
   # when no `y` is provided, the default is to have a
   # discrete/factor axis with individuals as rows
@@ -162,9 +182,10 @@ ggetho <- function(data,
   }
     #sdt[,,.SD,keyby=c("id", "x_name")]
 
+  # Save the summarized data if a cache is given
   if(!is.null(cache)) {
     output_table <- copy(sdt)
-    output_table$file_info <- unlist(lapply(output_table$file_info, function(x) x$path))
+    if("file_info" %in% colnames(output_table)) output_table$file_info <- unlist(lapply(output_table$file_info, function(x) x$path))
     fwrite(x = output_table, file = cache)
 
     # write.table(x = sdt, file = "/tmp/dt_bin.csv", sep = ",", quote = F, row.names = F, col.names = T)
