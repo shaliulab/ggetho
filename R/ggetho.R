@@ -12,7 +12,7 @@
 #' @param time_offset time offset (i.e. phase, in seconds) when using `time_wrap`
 #' @param multiplot integer, greater than two, or NULL, the default (see details)
 #' @param multiplot_period the duration of the period when mutiplotting (see details)
-#' @param cache whether to save the binned dt to a temporary file or not
+#' @param cache path of the temporary dir to which data shall be output.
 #' @param ... additional arguments to be passed to [ggplot2::ggplot()]
 #' @details `time_wrap` is typically used to express time relatively to the start of the the day.
 #' In other words, it can help be used to pull all days together in one representative day.
@@ -80,9 +80,10 @@ ggetho <- function(data,
                     cache = NULL,
                     ...){
 
-
   # trick to avoid NOTES from R CMD check:
   x_off = x_name = y =  . = NULL
+
+  dir.create(cache, showWarnings = FALSE)
 
   ## Handle the time_offset and time_wrap args
   ## In case time_offset is greater than the time_wrap
@@ -183,13 +184,14 @@ ggetho <- function(data,
     #sdt[,,.SD,keyby=c("id", "x_name")]
 
   # Save the summarized data if a cache is given
-  if(!is.null(cache)) {
-    output_table <- copy(sdt)
-    if("file_info" %in% colnames(output_table)) output_table$file_info <- unlist(lapply(output_table$file_info, function(x) x$path))
-    fwrite(x = output_table, file = cache)
+  # if(!is.null(cache)) {
+  #   # output_table <- copy(sdt)
+    # if("file_info" %in% colnames(output_table)) output_table$file_info <- unlist(lapply(output_table$file_info, function(x) x$path))
+    # fileName <- file.path(cache, "dt_bin.csv")
+    # fwrite(x = output_table, file = fileName)
 
     # write.table(x = sdt, file = "/tmp/dt_bin.csv", sep = ",", quote = F, row.names = F, col.names = T)
-  }
+  # }
 
   scale_x_FUN <- auto_x_time_scale(sdt[[mapping_list$x]])
   mapping_list <- lapply(mapping_list,
