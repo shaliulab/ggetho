@@ -1,4 +1,4 @@
-Package: ggetho
+Package: fslggetho
 Title: Visualisation of High-Throughput Behavioural (i.e. Ethomics) Data
 Date: 2018-10-04
 Version: 0.3.4
@@ -11,7 +11,7 @@ Description: Extension of 'ggplot2' providing layers, scales and preprocessing f
 Depends: 
     R (>= 3.00),
     ggplot2,
-    behavr
+    fslbehavr
 Imports:
     data.table,
     stringr,
