@@ -59,7 +59,7 @@ ggspectro <- function(data,
 
   var_of_interest = mapping_list$z
 
-  foo <- function(data){ behavr::bin_apply_all(data,
+  foo <- function(data){ fslbehavr::bin_apply_all(data,
                                          var_of_interest,
                                          x = x_name,
                                          x_bin_length = summary_time_window,
