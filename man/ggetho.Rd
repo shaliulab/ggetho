@@ -9,7 +9,7 @@ ggetho(data, mapping, summary_FUN = mean,
   multiplot = NULL, multiplot_period = hours(24), ...)
 }
 \arguments{
-\item{data}{\link[behavr:behavr]{behavr::behavr} table containing the data and metadata}
+\item{data}{\link[behavr:behavr]{fslbehavr::behavr} table containing the data and metadata}
 
 \item{mapping}{default list of aesthetic mappings to use for plot}
 
