@@ -185,12 +185,17 @@ ggetho <- function(data,
 
   # Save the summarized data if a cache is given
   # if(!is.null(cache)) {
-  #   # output_table <- copy(sdt)
-    # if("file_info" %in% colnames(output_table)) output_table$file_info <- unlist(lapply(output_table$file_info, function(x) x$path))
-    # fileName <- file.path(cache, "dt_bin.csv")
-    # fwrite(x = output_table, file = fileName)
-
-    # write.table(x = sdt, file = "/tmp/dt_bin.csv", sep = ",", quote = F, row.names = F, col.names = T)
+  #   # browser()
+  #   tryCatch(expr = {
+  #   output_table <- copy(sdt)
+  #   if("file_info" %in% colnames(output_table)) {
+  #     output_table[, file_info := unlist(lapply(file_info, function(x) x$path))]
+  #   }
+  #   fileName <- file.path(cache, "dt_bin.csv")
+  #   fwrite(x = output_table, file = fileName)
+  #
+  #   write.table(x = sdt, file = file.path(cache, "dt_bin.csv"), sep = ",", quote = F, row.names = F, col.names = T)
+  #   }, error = browser())
   # }
 
   scale_x_FUN <- auto_x_time_scale(sdt[[mapping_list$x]])
@@ -221,8 +226,12 @@ ggetho <- function(data,
 
   plot <- out + scale_x_FUN()
   if (!is.null(cache))
-    return(list(plot = plot, sdt = output_table))
-  else
+    return(list(
+      plot = plot,
+      sdt = NA
+      # sdt = output_table
+      ))
+    else
     return(plot)
 }
 
