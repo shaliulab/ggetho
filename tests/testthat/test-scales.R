@@ -11,7 +11,7 @@ test_that("scales work", {
   five_day <- round(-5:5  * 24 * 3600)
 
 
-  htr <- ggetho::hours_trans()
+  htr <- fslggetho::hours_trans()
 
   #(three_day/10) / behavr::hours(1)
 
@@ -29,7 +29,7 @@ T
   expect_identical(as.numeric(htr$breaks(five_day/13)) / 3600, c(-9,-6,-3,0,3,6,9) )
 
 
-  dtr <- ggetho::days_trans()
+  dtr <- fslggetho::days_trans()
   as.numeric(dtr$breaks(one_h)) / 3600 / 24
   as.numeric(dtr$breaks(one_h/3))/ 3600 / 24
   as.numeric(dtr$breaks(three_h))/ 3600 / 24
