@@ -6,10 +6,10 @@
 \usage{
 ggetho(data, mapping, summary_FUN = mean,
   summary_time_window = mins(30), time_wrap = NULL, time_offset = 0,
-  multiplot = NULL, multiplot_period = hours(24), ...)
+  multiplot = NULL, multiplot_period = hours(24), cache = NULL, ...)
 }
 \arguments{
-\item{data}{\link[behavr:behavr]{fslbehavr::behavr} table containing the data and metadata}
+\item{data}{\link[fslbehavr:behavr]{fslbehavr::behavr} table containing the data and metadata}
 
 \item{mapping}{default list of aesthetic mappings to use for plot}
 
@@ -24,6 +24,8 @@ ggetho(data, mapping, summary_FUN = mean,
 \item{multiplot}{integer, greater than two, or NULL, the default (see details)}
 
 \item{multiplot_period}{the duration of the period when mutiplotting (see details)}
+
+\item{cache}{path of the temporary dir to which data shall be output.}
 
 \item{...}{additional arguments to be passed to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}}
 }

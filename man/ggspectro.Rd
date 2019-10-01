@@ -9,7 +9,7 @@ ggspectro(data, mapping = aes(), summary_FUN = mean,
   ...)
 }
 \arguments{
-\item{data}{\link[behavr:behavr]{fslbehavr::behavr} table containing the data and metadata}
+\item{data}{\link[fslbehavr:behavr]{fslbehavr::behavr} table containing the data and metadata}
 
 \item{mapping}{default list of aesthetic mappings to use for plot}
 
@@ -37,5 +37,15 @@ pl <- ggspectro(spect_dt,time_wrap = hours(24)) + stat_tile_etho() + scale_y_hou
   stat_ld_annotations(ld_colours = c("grey","black"))
 pl + facet_grid(period_group ~ .)
 pl + facet_wrap(~ id)
+}
+}
+\references{
+\itemize{
+\item The relevant \href{https://rethomics.github.io/ggetho.html#spectrogram}{rethomic tutorial section}
+}
+}
+\seealso{
+\itemize{
+\item \link{ggperio} to visualise periodograms
 }
 }

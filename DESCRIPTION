@@ -28,5 +28,5 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/rethomics/ggetho
 BugReports: https://github.com/rethomics/ggetho/issues
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)

@@ -7,7 +7,7 @@
 ggperio(data, mapping = aes(x = period, y = power), ...)
 }
 \arguments{
-\item{data}{\link[behavr:behavr]{fslbehavr::behavr} table containing the data and metadata}
+\item{data}{\link[fslbehavr:behavr]{fslbehavr::behavr} table containing the data and metadata}
 
 \item{mapping}{default list of aesthetic mappings to use for plot}
 
@@ -51,5 +51,6 @@ out +  stat_pop_etho() + facet_wrap( ~ id, labeller = id_labeller)
 \item \link{ggetho} to plot time series
 \item \link{geom_peak} to draw peaks on a periodogram
 \item \link[zeitgebr:periodogram]{zeitgebr::periodogram} to compute periodograms in a first place
+\item \link{ggspectro} to visualise spectrograms
 }
 }

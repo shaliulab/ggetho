@@ -1,4 +1,4 @@
 library(testthat)
-library(ggetho)
+libary(fslggetho)
 
-test_check("ggetho")
+test_check("fslggetho")
