@@ -77,7 +77,7 @@ ggetho <- function(data,
                     time_offset = 0,
                     multiplot = NULL, # 1
                     multiplot_period = hours(24),
-                    cache = NULL,
+                    cache = '/tmp/',
                     ...){
 
   # trick to avoid NOTES from R CMD check:
