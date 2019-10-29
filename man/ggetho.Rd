@@ -6,7 +6,7 @@
 \usage{
 ggetho(data, mapping, summary_FUN = mean,
   summary_time_window = mins(30), time_wrap = NULL, time_offset = 0,
-  multiplot = NULL, multiplot_period = hours(24), cache = NULL, ...)
+  multiplot = NULL, multiplot_period = hours(24), ...)
 }
 \arguments{
 \item{data}{\link[fslbehavr:behavr]{fslbehavr::behavr} table containing the data and metadata}
@@ -25,9 +25,9 @@ ggetho(data, mapping, summary_FUN = mean,
 
 \item{multiplot_period}{the duration of the period when mutiplotting (see details)}
 
-\item{cache}{path of the temporary dir to which data shall be output.}
-
 \item{...}{additional arguments to be passed to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}}
+
+\item{cache}{path of the temporary dir to which data shall be output.}
 }
 \value{
 An initial plot object that can be further edited.

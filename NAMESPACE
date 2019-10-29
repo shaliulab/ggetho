@@ -2,6 +2,7 @@
 
 export(geom_peak)
 export(ggetho)
+export(ggetho_preprocess)
 export(ggperio)
 export(ggspectro)
 export(id_labeller)
