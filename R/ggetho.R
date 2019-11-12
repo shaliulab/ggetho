@@ -86,34 +86,16 @@ ggetho <- function(data,
                                          multiplot,
                                          multiplot_period)
 
-  sdt <- preprocess_result$dt
+  processed_dt <- preprocess_result$dt
   mapping <- preprocess_result$mapping
   scale_x_FUN <- preprocess_result$scale_x_fun
   discrete_y <- preprocess_result$discrete_y
   time_offset <- preprocess_result$time_offset
 
+  plot <- ggetho_plot(processed_dt, mapping, scale_x_FUN, discrete_y, time_wrap, time_offset, multiplot, multiplot_period, ...)
 
-  out <- ggplot(sdt, mapping,...)
-  # add some vertical margin  to the plot when needed, this is to show
-  # LD annotations
-
-  if(discrete_y){
-    p <- ggplot_build(out)
-    yr <- p$layout$panel_ranges[[1]]$y.range
-    ymin <- yr[1]
-    ymax <- yr[2]
-    mar <- c(ymin - (ymax-ymin) *0.03, (ymax-ymin) + 0.5 +  (ymax-ymin) *0.03)
-    out <- out + geom_blank() +   geom_blank(aes(y=y), data.frame(y=mar), inherit.aes = FALSE)
-  }
-
-  if(!is.null(time_wrap))
-    return( out + scale_x_FUN(limits=c(- time_offset, time_wrap - time_offset)))
-
-  plot <- out + scale_x_FUN()
   return(plot)
 }
-
-
 
 
 auto_x_time_scale <- function(t){

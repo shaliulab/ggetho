@@ -2,6 +2,7 @@
 
 export(geom_peak)
 export(ggetho)
+export(ggetho_plot)
 export(ggetho_preprocess)
 export(ggperio)
 export(ggspectro)

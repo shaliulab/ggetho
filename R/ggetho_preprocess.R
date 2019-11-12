@@ -137,6 +137,6 @@ ggetho_preprocess <- function(data, mapping,
   mapping = do.call(aes_string, mapping_list)
 
 
-  return(list(dt = sdt, mapping = mapping, scale_x_fun = scale_x_FUN, discrete_y = discrete_y, time_offset = time_offset))
+  return(list(dt = sdt, mapping = mapping, scale_x_FUN = scale_x_FUN, discrete_y = discrete_y, time_offset = time_offset))
 
 }
