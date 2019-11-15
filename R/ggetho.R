@@ -88,7 +88,7 @@ ggetho <- function(data,
 
   processed_dt <- preprocess_result$dt
   mapping <- preprocess_result$mapping
-  scale_x_FUN <- preprocess_result$scale_x_fun
+  scale_x_FUN <- preprocess_result$scale_x_FUN
   discrete_y <- preprocess_result$discrete_y
   time_offset <- preprocess_result$time_offset
 
