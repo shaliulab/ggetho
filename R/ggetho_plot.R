@@ -1,9 +1,19 @@
-
+#' Make a ggetho plot
+#'
+#' @title `ggetho_plot` isolates the plotting functionality in ggetho
+#' @details This function receives as input the outut produced by ggetho_preprocess and returns
+#' a ggplot2 plot
+#' @param mapping A summarised behavioral time series
+#' @param mapping A mapping object as defined in ggplot2
+#' @param scale_x_FUN A scale function that can set the units of the x axis,
+#' usually showing time i.e. seconds, hours, days, etc
+#' @param discrete_y Whether the variable mapped to the y axis is discrete or not
+#' @param time_wrap
+#' @param time_offset
 #' @import ggplot2
 #' @export
 ggetho_plot <- function(data, mapping, scale_x_FUN, discrete_y,
-                        time_wrap = NULL, time_offset = 0, multiplot = NULL, # 1
-                        multiplot_period = hours(24), ...) {
+                        time_wrap = NULL, time_offset = 0, ...) {
 
   out <- ggplot(data, mapping,...)
   # add some vertical margin  to the plot when needed, this is to show
@@ -14,13 +24,12 @@ ggetho_plot <- function(data, mapping, scale_x_FUN, discrete_y,
     yr <- p$layout$panel_ranges[[1]]$y.range
     ymin <- yr[1]
     ymax <- yr[2]
-    mar <- c(ymin - (ymax-ymin) *0.03, (ymax-ymin) + 0.5 +  (ymax-ymin) *0.03)
-    out <- out + geom_blank() +   geom_blank(aes(y=y), data.frame(y=mar), inherit.aes = FALSE)
+    mar <- c(ymin - (ymax - ymin) * 0.03, (ymax - ymin) + 0.5 +  (ymax - ymin) * 0.03)
+    # TODO Explain this line
+    out <- out + geom_blank() + geom_blank(aes(y=y), data.frame(y=mar), inherit.aes = FALSE)
   }
 
   if(!is.null(time_wrap))
-    return( out + scale_x_FUN(limits=c(- time_offset, time_wrap - time_offset)))
-
-  plot <- out + scale_x_FUN()
-  return(plot)
+    return( out + scale_x_FUN(limits=c(-time_offset, time_wrap - time_offset)))
+  return(out)
 }

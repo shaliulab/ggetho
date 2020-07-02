@@ -1,3 +1,21 @@
+#' Aggregate behavioral time series of binary variables into numerical summaries
+#'
+#' Compute a summary statistic described by `summary_FUN` over
+#' windows of duration `summary_time_window` seconds. If `summary_FUN` is the mean,
+#' the computation is equivalent is equivalent
+#' to calculating the fraction of time the animal spent on the binary's variable positive
+#' during the window
+#'
+#' @param data An scored behavioral dataset as returned by an annotating function
+#' @param summary_FUN A function describing a summary statistic of a binary variable
+#' @param summary_time_window Duration of the windows upon which the statistic should be applied, in seconds
+#' @param time_wrap For datasets encompassing more than 1 full circadian cycle (24 hours),
+#' whether to average data belonging to the same ZT point or not
+#' @param time_offset TODO
+#' @param multiplot TODO
+#' @param multiplot_period TODO
+#'
+#' @importFrom fslbehavr bin_apply_all
 #' @export
 ggetho_preprocess <- function(data, mapping,
                               summary_FUN = mean,
@@ -72,7 +90,7 @@ ggetho_preprocess <- function(data, mapping,
   ## are averaged, which results in a plot showing the average cycle
   ## The summarizing function is by default mean because it computes
   ## the fraction of TRUES (asleep) in the window
-  sdt <- fslbehavr::bin_apply_all(data,
+  data_binned <- fslbehavr::bin_apply_all(data,
                                   var_of_interest,
                                   x = x_name,
                                   x_bin_length = summary_time_window,
@@ -80,7 +98,7 @@ ggetho_preprocess <- function(data, mapping,
                                   FUN = summary_FUN)
 
   # Join data and metadata together so ggplot2 has access to everything
-  sdt <- rejoin(sdt)
+  data_rejoined <- rejoin(data_binned)
   # when no `y` is provided, the default is to have a
   # discrete/factor axis with individuals as rows
 
@@ -97,38 +115,23 @@ ggetho_preprocess <- function(data, mapping,
             When multiploting, the y axis is used for consecutive periods,
             the variable of interest should be on the z axis")
     }
-    sdt <- make_multiplot(sdt, multiplot, multiplot_period, summary_time_window)
+    data_rejoined <- make_multiplot(data_rejoined, multiplot, multiplot_period, summary_time_window)
     mapping_list$y = "period"
     discrete_y <- TRUE
   }
 
   if(!is.null(time_wrap)){
-    sdt[, x_off := eval(parse(text = x_name)) ]
-    sdt[, x_off := ((x_off + time_offset) %% time_wrap ) - time_offset]
-    sdt[, x_name] <- sdt[, x_off]
-    sdt[, x_off := NULL]
+    data_rejoined[, x_off := eval(parse(text = x_name)) ]
+    data_rejoined[, x_off := ((x_off + time_offset) %% time_wrap ) - time_offset]
+    data_rejoined[, x_name] <- data_rejoined[, x_off]
+    data_rejoined[, x_off := NULL]
   }
-  #sdt[,,.SD,keyby=c("id", "x_name")]
 
-  # Save the summarized data if a cache is given
-  # if(!is.null(cache)) {
-  #   # browser()
-  #   tryCatch(expr = {
-  #   output_table <- copy(sdt)
-  #   if("file_info" %in% colnames(output_table)) {
-  #     output_table[, file_info := unlist(lapply(file_info, function(x) x$path))]
-  #   }
-  #   fileName <- file.path(cache, "dt_bin.csv")
-  #   fwrite(x = output_table, file = fileName)
-  #
-  #   write.table(x = sdt, file = file.path(cache, "dt_bin.csv"), sep = ",", quote = F, row.names = F, col.names = T)
-  #   }, error = browser())
-  # }
-
-  scale_x_FUN <- auto_x_time_scale(sdt[[mapping_list$x]])
+  # Smart-select the right time scale for the X axis
+  scale_x_FUN <- auto_x_time_scale(data_rejoined[[mapping_list$x]])
   mapping_list <- lapply(mapping_list,
                          function(x){
-                           if(x %in% colnames(sdt))
+                           if(x %in% colnames(data_rejoined))
                              paste0("`", x, "`")
                            else
                              x
@@ -136,7 +139,8 @@ ggetho_preprocess <- function(data, mapping,
 
   mapping = do.call(aes_string, mapping_list)
 
-
-  return(list(dt = sdt, mapping = mapping, scale_x_FUN = scale_x_FUN, discrete_y = discrete_y, time_offset = time_offset))
-
+  return(list(
+    data = data_rejoined, mapping = mapping,
+    scale_x_FUN = scale_x_FUN, discrete_y = discrete_y, time_offset = time_offset
+  ))
 }
