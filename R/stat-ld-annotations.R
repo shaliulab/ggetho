@@ -75,13 +75,15 @@ StatLDAnnotation <- ggplot2::ggproto("StatLDannotation", ggplot2::Stat,
                               }
 
 
-                              default_limits <- c(min(data$x), max(data$x))
+
+                              default_limits <- c(min(data$x, na.rm = T), max(data$x, na.rm = T))
                               x <- ifelse(is.na(params$x_limits), default_limits, params$x_limits)
 
 
                               if(diff(x) <=0 ){
                                 stop("x limits are not in order: `x_limits[1] >= x_limits[2]`")
                               }
+
 
                               out <- ld_annotation(x, period=params$period,
                                                    phase=params$phase,
@@ -123,20 +125,30 @@ ld_annotation <- function(x, period = 1,
   left <- min(x)
   right <- max(x)
   length_l <- period * l_ratio
-  length_d <- period * length_l
+  length_d <- period - length_l
 
   #p2 <- period/2
-  phase <- (phase %% period) - period
+  phase <- ((phase %% period) - period) %% period
   first_l = ceiling( left / period) * period  + phase
   first_d = ifelse(first_l - x[1] < length_l, first_l + length_l , first_l - length_d)
 
-  l_starts <- seq(from = first_l, to = right, by=period)
-  d_starts <- seq(from = first_d, to = right, by=period)
+  if ((first_l + period) < right) {
+    l_starts <- seq(from = first_l, to = right, by=period)
+  } else {
+    l_starts <- first_l
+  }
+
+  if ((first_d + period) < right) {
+    d_starts <- seq(from = first_d, to = right, by=period)
+  } else {
+    d_starts <- first_d
+  }
 
   out <- data.table::data.table( xmin = c(l_starts, d_starts),
                                  xmax=NA_real_,
                                  ld = rep(c("L","D"), times  = c(length(l_starts),length(d_starts))),
                                  key = "xmin")
+
 
   out[, xmax := c(out[2 : .N, xmin], right)]
   out[xmin < left, xmin := left]
@@ -222,7 +234,6 @@ GeomLD <- ggproto("GeomLD", Geom,
                   draw_key = draw_key_path
 )
 
-
 ggname <- function (prefix, grob){
   grob$name <- grid::grobName(grob, prefix)
   grob
@@ -231,3 +242,7 @@ rect_to_poly <- function (xmin, xmax, ymin, ymax){
   data.frame(y = c(ymax, ymax, ymin, ymin, ymax),
              x = c(xmin, xmax, xmax, xmin, xmin))
 }
+
+# data <- fslbehavr::toy_activity_data()
+# fslggetho::ggetho_plot(data = data, aes(x = t, y = asleep)) + stat_pop_etho() + stat_ld_annotations()
+

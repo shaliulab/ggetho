@@ -4,7 +4,7 @@
 #' in order to subsequently represent it over time (x axis)
 #' (using layers provided either by `ggplot2` or `ggetho`).
 #'
-#' @param data [fslbehavr::behavr] table containing the data and metadata
+#' @param data [fslbeahvr::behavr] table containing the data and metadata
 #' @param mapping default list of aesthetic mappings to use for plot
 #' @param summary_FUN method (function) used to summarise `variable` over time (typically, the mean)
 #' @param summary_time_window width (in seconds) of the time window to compute a summary on
@@ -12,7 +12,6 @@
 #' @param time_offset time offset (i.e. phase, in seconds) when using `time_wrap`
 #' @param multiplot integer, greater than two, or NULL, the default (see details)
 #' @param multiplot_period the duration of the period when mutiplotting (see details)
-#' @param cache path of the temporary dir to which data shall be output.
 #' @param ... additional arguments to be passed to [ggplot2::ggplot()]
 #' @details `time_wrap` is typically used to express time relatively to the start of the the day.
 #' In other words, it can help be used to pull all days together in one representative day.
@@ -28,7 +27,7 @@
 #' It is possible to set duration of the period, which is typically 24 h to arbitrary values using the
 #' `multiplot_period` argument.
 #'
-#' @return An initial plot object that can be further edited.
+#' @return An initial ggplot object that can be further edited.
 #'
 #' @examples
 #' # We start by making a dataset with 20 animals
@@ -70,41 +69,137 @@
 #' * The relevant [rethomic tutorial section](https://rethomics.github.io/ggetho.html#the-ggetho-function)
 #' @export
 ggetho <- function(data,
-                    mapping,
-                    summary_FUN = mean,
-                    summary_time_window = mins(30),
-                    time_wrap = NULL,
-                    time_offset = 0,
-                    multiplot = NULL, # 1
-                    multiplot_period = hours(24),
-                    ...){
+                   mapping,
+                   summary_FUN = mean,
+                   summary_time_window = mins(30),
+                   time_wrap = NULL,
+                   time_offset = 0,
+                   multiplot = NULL, # 1
+                   multiplot_period = hours(24),
+                   ...){
 
-  preprocess_result <- ggetho_preprocess(data, mapping, summary_FUN,
-                                         summary_time_window,
-                                         time_wrap,
-                                         time_offset,
-                                         multiplot,
-                                         multiplot_period)
 
-  processed_dt <- preprocess_result$dt
-  mapping <- preprocess_result$mapping
-  scale_x_FUN <- preprocess_result$scale_x_FUN
-  discrete_y <- preprocess_result$discrete_y
-  time_offset <- preprocess_result$time_offset
+  # trick to avoid NOTES from R CMD check:
+  x_off = x_name = y =  . = NULL
 
-  plot <- ggetho_plot(processed_dt, mapping, scale_x_FUN, discrete_y, time_wrap, time_offset, multiplot, multiplot_period, ...)
+  if(time_offset != 0 & is.null(time_wrap))
+    warning("Time offset only relevant when using time_wrap.
+             Ignoring argument")
+  else
+    time_offset <- time_offset %% time_wrap
 
-  return(plot)
+  #todo check argument types!!
+  if(!is.null(multiplot)){
+    if(!is.null(time_wrap))
+      stop("Cannot use time wrapping on a multiplot!") #todo
+    if(!multiplot %in% 2:10000)
+      stop("multiplot must be an integer >1, typically 2, for double plotting")
+  }
+
+  #mapping_list <- as.list(as.character(mapping))
+  mapping_list <- make_labels(mapping)
+  aes_names <- names(mapping_list)
+
+
+  has_colour = "colour" %in% aes_names
+  has_fill = "fill" %in% aes_names
+
+  # if has only colour Xor fill defined
+  if( xor(has_fill, has_colour)){
+    col = c(mapping_list$fill, mapping_list$colour)[[1]]
+    mapping_list$fill <- col
+    mapping_list$colour <- col
+  }
+
+  if(!"x" %in% aes_names)
+    mapping_list$x = "t"
+
+  x_name <- mapping_list$x
+  discrete_y <- FALSE
+  if("z" %in% aes_names){
+    var_of_interest = mapping_list$z
+    discrete_y <- TRUE
+  }
+  else if("y" %in% aes_names)
+    var_of_interest = mapping_list$y
+  else
+    stop("Either `y` or `z` should be provided as variable of interest")
+
+  sdt <- fslbehavr::bin_apply_all(data,
+                               var_of_interest,
+                               x = x_name,
+                               x_bin_length = summary_time_window,
+                               wrap_x_by = time_wrap,
+                               FUN = summary_FUN)
+  sdt <- rejoin(sdt)
+  # when no `y` is provided, the default is to have a
+  # discrete/factor axis with individuals as rows
+
+  if(is.null(multiplot)){
+    if(!"y" %in% aes_names){
+      # todo check those columns exist
+      mapping_list$y = "id"
+    }
+  }
+  else{
+    if("y" %in% aes_names){
+      stop("Cannot use y AND multiplot.
+            When multiploting, the y axis is used for consecutive periods,
+            the variable of interest should be on the z axis")
+    }
+    sdt <- make_multiplot(sdt, multiplot, multiplot_period, summary_time_window)
+    mapping_list$y = "period"
+    discrete_y <- TRUE
+  }
+
+  if(!is.null(time_wrap)){
+    sdt[, x_off := eval(parse(text = x_name)) ]
+    sdt[, x_off := ((x_off + time_offset) %% time_wrap ) - time_offset]
+    sdt[, x_name] <- sdt[, x_off]
+    sdt[, x_off := NULL]
+  }
+  #sdt[,,.SD,keyby=c("id", "x_name")]
+
+
+  scale_x_FUN <- auto_x_time_scale(sdt[[mapping_list$x]])
+  mapping_list <- lapply(mapping_list,
+                         function(x){
+                           if(x %in% colnames(sdt))
+                             paste0("`", x, "`")
+                           else
+                             x
+                         })
+
+  mapping = do.call(aes_string, mapping_list)
+  out <- ggplot(sdt, mapping,...)
+  # add some vertical margin  to the plot when needed, this is to show
+  # LD annotations
+
+  if(discrete_y){
+    p <- ggplot_build(out)
+    yr <- p$layout$panel_ranges[[1]]$y.range
+    ymin <- yr[1]
+    ymax <- yr[2]
+    mar <- c(ymin - (ymax-ymin) *0.03, (ymax-ymin) + 0.5 +  (ymax-ymin) *0.03)
+    out <- out + geom_blank() +   geom_blank(aes(y=y), data.frame(y=mar), inherit.aes = FALSE)
+  }
+
+  if(!is.null(time_wrap))
+    return( out + scale_x_FUN(limits=c(- time_offset, time_wrap- time_offset)))
+
+  out + scale_x_FUN()
 }
+
+
 
 
 auto_x_time_scale <- function(t){
   rng <- range(as.numeric(t))
   diff <- rng[2] - rng[1]
-  if(diff > fslbehavr::days(3)){
+  if(diff > fslbeahvr::days(3)){
     return(scale_x_days)
   }
-  else if(diff > fslbehavr::hours(3)){
+  else if(diff > fslbeahvr::hours(3)){
     return(scale_x_hours)
   }
   else{
@@ -122,11 +217,11 @@ make_multiplot <- function(data, n, per, summary_time_window){
   min_per <- data[, min(period)]
   max_per <- data[, max(period)-(n-1)]
   l <- lapply(min_per:max_per, function(x){
-                  o <- data[period %between% c(x,x+(n-1))]
-                  o[, t := t - per * x ]
-                  o <- na.omit(o[t_map, on="t", roll=summary_time_window, rollend=TRUE])
-                  o[, period:= x]
-                  o
+    o <- data[period %between% c(x,x+(n-1))]
+    o[, t := t - per * x ]
+    o <- na.omit(o[t_map, on="t", roll=summary_time_window, rollend=TRUE])
+    o[, period:= x]
+    o
   })
 
   out <- rbindlist(l)

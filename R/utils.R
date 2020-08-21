@@ -1,6 +1,7 @@
 match_calculated_aes <- "^\\.\\.([a-zA-Z._]+)\\.\\.$"
 
-# Convert aesthetic mapping into text labels
+#' Convert aesthetic mapping into text labels
+#' @export
 make_labels <- function(mapping) {
   if(utils::packageVersion("ggplot2") <= "2.2.1")
     return(as.list(as.character(mapping)))

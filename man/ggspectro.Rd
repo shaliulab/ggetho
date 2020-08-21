@@ -4,9 +4,15 @@
 \alias{ggspectro}
 \title{Prepare a ggplot object to represent spectrogram data}
 \usage{
-ggspectro(data, mapping = aes(), summary_FUN = mean,
-  summary_time_window = mins(30), time_wrap = NULL, time_offset = 0,
-  ...)
+ggspectro(
+  data,
+  mapping = aes(),
+  summary_FUN = mean,
+  summary_time_window = mins(30),
+  time_wrap = NULL,
+  time_offset = 0,
+  ...
+)
 }
 \arguments{
 \item{data}{\link[fslbehavr:behavr]{fslbehavr::behavr} table containing the data and metadata}
