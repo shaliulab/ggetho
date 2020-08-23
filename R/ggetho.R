@@ -192,7 +192,7 @@ ggetho <- function(data,
 
 
 
-
+#' @importFrom fslbehavr days hours
 auto_x_time_scale <- function(t){
   rng <- range(as.numeric(t))
   diff <- rng[2] - rng[1]

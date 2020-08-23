@@ -34,11 +34,9 @@ ggetho(
 \item{multiplot_period}{the duration of the period when mutiplotting (see details)}
 
 \item{...}{additional arguments to be passed to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}}
-
-\item{cache}{path of the temporary dir to which data shall be output.}
 }
 \value{
-An initial plot object that can be further edited.
+An initial ggplot object that can be further edited.
 }
 \description{
 This function summarises a variable of interest (y or z axis)

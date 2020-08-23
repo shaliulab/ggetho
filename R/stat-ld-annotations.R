@@ -58,6 +58,7 @@ stat_ld_annotations <- function (mapping = NULL,
                                  show.legend = FALSE,
                                  inherit.aes = TRUE)
 {
+
   layer(data = data, mapping = mapping, stat = StatLDAnnotation,
         geom = GeomLD,
         position = position, show.legend = show.legend, inherit.aes = inherit.aes,
@@ -67,18 +68,18 @@ stat_ld_annotations <- function (mapping = NULL,
 }
 
 StatLDAnnotation <- ggplot2::ggproto("StatLDannotation", ggplot2::Stat,
-                            default_aes = ggplot2::aes(colour = "black", size = 0.5, linetype = 1,
-                                              alpha = .67),
+                            # default_aes = ggplot2::aes(colour = "black", size = 0.5, linetype = 1,
+                            #                   alpha = .67),
+                            default_aes = ggplot2::aes(colour = NA, height = 1, size = 0.5, linetype = 1,
+                                                       alpha = .2),
+
                             setup_params = function(data, params){
                               if(length(params$x_limits) != 2 ){
                                 stop("`x_limits` should be of length 2")
                               }
 
-
-
                               default_limits <- c(min(data$x, na.rm = T), max(data$x, na.rm = T))
                               x <- ifelse(is.na(params$x_limits), default_limits, params$x_limits)
-
 
                               if(diff(x) <=0 ){
                                 stop("x limits are not in order: `x_limits[1] >= x_limits[2]`")
@@ -108,8 +109,18 @@ StatLDAnnotation <- ggplot2::ggproto("StatLDannotation", ggplot2::Stat,
 )
 
 
-
-
+#' Compute where the LD transitions occurred in an interval
+#'
+#' Given a range represented by its min and max, a period (cycle) length
+#' phase (position in the cycle) and ratio of the L phase compared to the full cycle
+#' compute the timepoints where the L->D and D->L transitions occur
+#'
+#' @importFrom data.table data.table
+#' @param x Vector of length 2 containing the min and max timepoint
+#' @param period Length of one cycle in the same units as x
+#' @param phase Stating position within the period
+#' @param l_ratio Numeric from 0 to 1 stating the fraction of the cycle
+#' that corresponds to the L phase
 ld_annotation <- function(x, period = 1,
                           phase = 0,
                           l_ratio = 0.5){
@@ -118,9 +129,9 @@ ld_annotation <- function(x, period = 1,
   # trick to avoid NOTES from R CMD check:
   xmin = xmax = y =  . = NULL
 
-
   if(!(abs(phase) <= period))
     stop("Phase should be lower or equal to period!")
+
 
   left <- min(x)
   right <- max(x)
@@ -129,8 +140,9 @@ ld_annotation <- function(x, period = 1,
 
   #p2 <- period/2
   phase <- ((phase %% period) - period) %% period
-  first_l = ceiling( left / period) * period  + phase
-  first_d = ifelse(first_l - x[1] < length_l, first_l + length_l , first_l - length_d)
+  first_l <- ceiling( left / period) * period  + phase
+  first_d <- ifelse(x[1] > first_l, first_l + length_l, first_l - length_d)
+  # first_d <- ifelse(first_l - x[1] < length_l, first_l + length_l , first_l - length_d)
 
   if ((first_l + period) < right) {
     l_starts <- seq(from = first_l, to = right, by=period)

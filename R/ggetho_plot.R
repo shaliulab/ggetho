@@ -8,8 +8,9 @@
 #' @param scale_x_FUN A scale function that can set the units of the x axis,
 #' usually showing time i.e. seconds, hours, days, etc
 #' @param discrete_y Whether the variable mapped to the y axis is discrete or not
-#' @param time_wrap
-#' @param time_offset
+#@param time_wrap
+#@param time_offset
+#'
 #' @import ggplot2
 #' @export
 ggetho_plot <- function(data, mapping,

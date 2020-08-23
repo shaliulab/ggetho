@@ -22,7 +22,7 @@ test_that("annotations work", {
 
 
 test_that("annotations work with unbound limits", {
-  t <- mins(0: 60 * 24 * 10)
+  t <- mins(0:60 * 24 * 10)
   dt <- behavr(data.table(id=1, t=t, x=runif(length(t)), key="id"),
                data.table(id=1,key="id"))
   dt
@@ -38,6 +38,41 @@ test_that("annotations work with unbound limits", {
 
   pl <- ggetho(dt, aes(t,x)) + stat_ld_annotations(x_limits = c(days(10), days(3.4))) + geom_point()
   testthat::expect_error(print(pl), "limits are not in order")
+})
+
+test_that("annotations work with experiment starting in D phase", {
+  t <- mins(0:60 * 24 * 10) + hours(13)
+  dt <- behavr(data.table(id=1, t=t, x=runif(length(t)), key="id"),
+               data.table(id=1,key="id"))
+
+
+  dphase <- ggetho(dt, aes(t,x)) +
+    stat_ld_annotations() +
+    geom_point()
+
+
+  ignore_first_night <- ggetho(dt, aes(t,x)) +
+    stat_ld_annotations(x_limits = c(days(1), NA)) +
+    geom_point()
+
+
+  dphase_data <- ggplot_build(dphase)$data[[1]]
+  igfn_data <- ggplot_build(ignore_first_night)$data[[1]]
+  print(nrow(dphase_data))
+  print(nrow(igfn_data))
+
+  expect_false(isTRUE(all.equal(dphase_data, igfn_data)))
+
+  igfn_data2 <- igfn_data
+  igfn_data2[nrow(igfn_data2) + 1, ] <-  list(
+    xmin = hours(13), xmax = hours(24),
+     ld = "D", PANEL = 1, group = -1,
+     colour = "black", size = 0.5,
+     linetype = 1, alpha = NA, fill = "black"
+    )
+  igfn_data2 <- dplyr::arrange(igfn_data2, xmin)
+  expect_true(all.equal(dphase_data, igfn_data2))
+
 })
 
 
