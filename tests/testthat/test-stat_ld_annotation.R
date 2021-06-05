@@ -79,7 +79,7 @@ test_that("annotations work with experiment starting in D phase", {
 
 
 #
-# libary(fslggetho)
+# libary(ggetho)
 # metadata <- data.table(id=sprintf("toy_experiment|%02d" , 1:40), region_id=1:40,
 #                        condition=c("A","B"),
 #                        sex=c("M","M", "F", "F"))

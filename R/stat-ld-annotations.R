@@ -255,6 +255,6 @@ rect_to_poly <- function (xmin, xmax, ymin, ymax){
              x = c(xmin, xmax, xmax, xmin, xmin))
 }
 
-# data <- fslbehavr::toy_activity_data()
-# fslggetho::ggetho_plot(data = data, aes(x = t, y = asleep)) + stat_pop_etho() + stat_ld_annotations()
+# data <- behavr::toy_activity_data()
+# ggetho::ggetho_plot(data = data, aes(x = t, y = asleep)) + stat_pop_etho() + stat_ld_annotations()
 

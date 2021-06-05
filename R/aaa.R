@@ -1,6 +1,6 @@
 #' @importFrom stats "na.omit"
 #' @import ggplot2
-#' @import fslbehavr
+#' @import behavr
 #' @import data.table
 NULL
 power = period = NULL

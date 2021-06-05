@@ -15,7 +15,7 @@
 #' @param multiplot TODO
 #' @param multiplot_period TODO
 #'
-#' @importFrom fslbehavr bin_apply_all
+#' @importFrom behavr bin_apply_all
 #' @export
 ggetho_preprocess <- function(data, mapping,
                               summary_FUN = mean,
@@ -90,7 +90,7 @@ ggetho_preprocess <- function(data, mapping,
   ## are averaged, which results in a plot showing the average cycle
   ## The summarizing function is by default mean because it computes
   ## the fraction of TRUES (asleep) in the window
-  data_binned <- fslbehavr::bin_apply_all(data,
+  data_binned <- behavr::bin_apply_all(data,
                                   var_of_interest,
                                   x = x_name,
                                   x_bin_length = summary_time_window,

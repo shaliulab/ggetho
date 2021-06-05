@@ -4,7 +4,7 @@
 #' in order to subsequently represent it over time (x axis)
 #' (using layers provided either by `ggplot2` or `ggetho`).
 #'
-#' @param data [fslbehavr::behavr] table containing the data and metadata
+#' @param data [behavr::behavr] table containing the data and metadata
 #' @param mapping default list of aesthetic mappings to use for plot
 #' @param summary_FUN method (function) used to summarise `variable` over time (typically, the mean)
 #' @param summary_time_window width (in seconds) of the time window to compute a summary on
@@ -125,7 +125,7 @@ ggetho <- function(data,
   else
     stop("Either `y` or `z` should be provided as variable of interest")
 
-  sdt <- fslbehavr::bin_apply_all(data,
+  sdt <- behavr::bin_apply_all(data,
                                var_of_interest,
                                x = x_name,
                                x_bin_length = summary_time_window,
@@ -192,14 +192,14 @@ ggetho <- function(data,
 
 
 
-#' @importFrom fslbehavr days hours
+#' @importFrom behavr days hours
 auto_x_time_scale <- function(t){
   rng <- range(as.numeric(t))
   diff <- rng[2] - rng[1]
-  if(diff > fslbehavr::days(3)){
+  if(diff > behavr::days(3)){
     return(scale_x_days)
   }
-  else if(diff > fslbehavr::hours(3)){
+  else if(diff > behavr::hours(3)){
     return(scale_x_hours)
   }
   else{

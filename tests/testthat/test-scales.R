@@ -2,18 +2,18 @@ context("scales")
 
 test_that("scales work", {
 
-  one_h <- round(fslbehavr::hours(-1:1))
-  three_h <- round(fslbehavr::hours(-3:3))
-  five_h <- round(fslbehavr::hours(-5:5))
-  twelve_h <- round(fslbehavr::hours(-12:12))
+  one_h <- round(behavr::hours(-1:1))
+  three_h <- round(behavr::hours(-3:3))
+  five_h <- round(behavr::hours(-5:5))
+  twelve_h <- round(behavr::hours(-12:12))
   one_day <- round(-24:24  * 3600)
   three_day <- round(-3:3  * 24 * 3600)
   five_day <- round(-5:5  * 24 * 3600)
 
 
-  htr <- fslggetho::hours_trans()
+  htr <- ggetho::hours_trans()
 
-  #(three_day/10) / fslbehavr::hours(1)
+  #(three_day/10) / behavr::hours(1)
 
   expect_identical(as.numeric(htr$breaks(one_h)) / 3600 , c(-1,-.5,0,.5,1))
   #as.numeric(htr$breaks(one_h/3)   /
@@ -29,7 +29,7 @@ T
   expect_identical(as.numeric(htr$breaks(five_day/13)) / 3600, c(-9,-6,-3,0,3,6,9) )
 
 
-  dtr <- fslggetho::days_trans()
+  dtr <- ggetho::days_trans()
   as.numeric(dtr$breaks(one_h)) / 3600 / 24
   as.numeric(dtr$breaks(one_h/3))/ 3600 / 24
   as.numeric(dtr$breaks(three_h))/ 3600 / 24
