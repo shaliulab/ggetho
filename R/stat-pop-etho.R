@@ -92,3 +92,36 @@ StatPopEtho <- ggplot2::ggproto("StatPopEtho", ggplot2::Stat,
 )
 
 
+#' @export
+geom_pop_etho <- function(mapping = NULL, data = NULL,
+                        stat = StatPopEtho, position = "identity",
+                        ...,
+                        method = ggplot2::mean_se,
+                        formula = NULL,
+                        se = TRUE,
+                        na.rm = FALSE,
+                        orientation = NA,
+                        show.legend = NA,
+                        inherit.aes = TRUE) {
+
+  params <- list(
+    na.rm = na.rm,
+    orientation = orientation,
+    se = se,
+    ...
+  )
+  params$method <- method
+  params$formula <- formula
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = ggplot2::GeomSmooth,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = params
+  )
+}
+
