@@ -17,7 +17,7 @@ ggetho(
 )
 }
 \arguments{
-\item{data}{\link[fslbehavr:behavr]{fslbehavr::behavr} table containing the data and metadata}
+\item{data}{\link[behavr:behavr]{behavr::behavr} table containing the data and metadata}
 
 \item{mapping}{default list of aesthetic mappings to use for plot}
 

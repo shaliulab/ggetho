@@ -67,6 +67,9 @@ stat_ld_annotations <- function (mapping = NULL,
                       ld_boxes = NULL, outline = outline,x_limits = x_limits, ...))
 }
 
+#' @export
+geom_ld_annotations <- stat_ld_annotations
+
 StatLDAnnotation <- ggplot2::ggproto("StatLDannotation", ggplot2::Stat,
                             # default_aes = ggplot2::aes(colour = "black", size = 0.5, linetype = 1,
                             #                   alpha = .67),
