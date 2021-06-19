@@ -52,7 +52,7 @@ stat_pop_etho <- function(mapping = NULL, data = NULL,
   layer(
     data = data,
     mapping = mapping,
-    stat = StatPopEtho,
+    stat = pop_etho,
     geom = geom,
     position = position,
     show.legend = show.legend,
@@ -67,7 +67,7 @@ stat_pop_etho <- function(mapping = NULL, data = NULL,
 }
 
 
-StatPopEtho <- ggplot2::ggproto("StatPopEtho", ggplot2::Stat,
+pop_etho <- ggplot2::ggproto("pop_etho", ggplot2::Stat,
                        compute_group = function(data, scales, method, method.args = list()) {
                          data <- data.table::as.data.table(data)
                          foo <- function(y){
@@ -94,7 +94,7 @@ StatPopEtho <- ggplot2::ggproto("StatPopEtho", ggplot2::Stat,
 
 #' @export
 geom_pop_etho <- function(mapping = NULL, data = NULL,
-                        stat = StatPopEtho, position = "identity",
+                        stat = pop_etho, position = "identity",
                         ...,
                         method = ggplot2::mean_se,
                         formula = NULL,
@@ -124,4 +124,3 @@ geom_pop_etho <- function(mapping = NULL, data = NULL,
     params = params
   )
 }
-
