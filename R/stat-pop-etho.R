@@ -77,6 +77,15 @@ StatPopEtho <- ggplot2::ggproto("StatPopEtho", ggplot2::Stat,
                          out <- data[,
                                      foo(y),
                                      keyby="x"]
+                         # this is a patch to deal when situations where only one data point
+                         # is available for each trace (because each trace is only one individual)
+                         # without the patch, the plot is obtained but a warning for each trace is generated
+                         # In max(ids, na.rm = TRUE) : no non-missing arguments to max; returning -Inf
+                         # Fortunately, the effect of a single individual trace is easy to solve:
+                         # ymin and ymax become NA, and just setting them to the same as y patches the problem
+                         if(all(is.na(out$ymin))) out$ymin <- out$y
+                         if(all(is.na(out$ymax))) out$ymax <- out$y
+
                          out
                        },
                        required_aes = c("x", "y")
