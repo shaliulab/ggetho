@@ -67,6 +67,9 @@ stat_tile_etho <- function(mapping = NULL, data = NULL,
   )
 }
 
+#' @export
+geom_tile_etho <- stat_tile_etho
+
 
 StatTileEtho <- ggproto("StatTileEtho",
                            StatBarTileEtho,
