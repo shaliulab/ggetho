@@ -11,38 +11,98 @@
 \alias{scale_y_seconds}
 \title{Scales for durations}
 \usage{
-scale_x_days(name = "Time", breaks = waiver(),
-  minor_breaks = waiver(), labels = waiver(), limits = NULL,
-  expand = waiver(), oob = scales::censor, na.value = NA_real_,
-  position = "bottom", time_wrap = NULL, unit = "day", log = FALSE)
+scale_x_days(
+  name = "Time",
+  breaks = waiver(),
+  minor_breaks = waiver(),
+  labels = waiver(),
+  limits = NULL,
+  expand = waiver(),
+  oob = scales::censor,
+  na.value = NA_real_,
+  position = "bottom",
+  time_wrap = NULL,
+  unit = "day",
+  log = FALSE
+)
 
-scale_y_days(name = "Time", breaks = waiver(),
-  minor_breaks = waiver(), labels = waiver(), limits = NULL,
-  expand = waiver(), oob = scales::censor, na.value = NA_real_,
-  position = "left", time_wrap = NULL, unit = "day", log = FALSE)
+scale_y_days(
+  name = "Time",
+  breaks = waiver(),
+  minor_breaks = waiver(),
+  labels = waiver(),
+  limits = NULL,
+  expand = waiver(),
+  oob = scales::censor,
+  na.value = NA_real_,
+  position = "left",
+  time_wrap = NULL,
+  unit = "day",
+  log = FALSE
+)
 
-scale_x_hours(name = "Time", breaks = waiver(),
-  minor_breaks = waiver(), labels = waiver(), limits = NULL,
-  expand = waiver(), oob = scales::censor, na.value = NA_real_,
-  position = "bottom", time_wrap = NULL, unit = "h", log = FALSE)
+scale_x_hours(
+  name = "Time",
+  breaks = waiver(),
+  minor_breaks = waiver(),
+  labels = waiver(),
+  limits = NULL,
+  expand = waiver(),
+  oob = scales::censor,
+  na.value = NA_real_,
+  position = "bottom",
+  time_wrap = NULL,
+  unit = "h",
+  log = FALSE
+)
 
-scale_y_hours(name = "Time", breaks = waiver(),
-  minor_breaks = waiver(), labels = waiver(), limits = NULL,
-  expand = waiver(), oob = scales::censor, na.value = NA_real_,
-  position = "left", time_wrap = NULL, unit = "h", log = FALSE)
+scale_y_hours(
+  name = "Time",
+  breaks = waiver(),
+  minor_breaks = waiver(),
+  labels = waiver(),
+  limits = NULL,
+  expand = waiver(),
+  oob = scales::censor,
+  na.value = NA_real_,
+  position = "left",
+  time_wrap = NULL,
+  unit = "h",
+  log = FALSE
+)
 
-scale_x_seconds(name = "Time", breaks = waiver(),
-  minor_breaks = waiver(), labels = waiver(), limits = NULL,
-  expand = waiver(), oob = scales::censor, na.value = NA_real_,
-  position = "bottom", time_wrap = NULL, unit = "s", log = FALSE)
+scale_x_seconds(
+  name = "Time",
+  breaks = waiver(),
+  minor_breaks = waiver(),
+  labels = waiver(),
+  limits = NULL,
+  expand = waiver(),
+  oob = scales::censor,
+  na.value = NA_real_,
+  position = "bottom",
+  time_wrap = NULL,
+  unit = "s",
+  log = FALSE
+)
 
-scale_y_seconds(name = "Time", breaks = waiver(),
-  minor_breaks = waiver(), labels = waiver(), limits = NULL,
-  expand = waiver(), oob = scales::censor, na.value = NA_real_,
-  position = "left", time_wrap = NULL, unit = "s", log = FALSE)
+scale_y_seconds(
+  name = "Time",
+  breaks = waiver(),
+  minor_breaks = waiver(),
+  labels = waiver(),
+  limits = NULL,
+  expand = waiver(),
+  oob = scales::censor,
+  na.value = NA_real_,
+  position = "left",
+  time_wrap = NULL,
+  unit = "s",
+  log = FALSE
+)
 }
 \arguments{
-\item{name}{The name of the scale. Used as axis or legend title. If
+\item{name}{The name of the scale. Used as the axis or legend title. If
 \code{waiver()}, the default, the name of the scale is taken from the first
 mapping used for that aesthetic. If \code{NULL}, the legend title will be
 omitted.}
@@ -70,33 +130,56 @@ output
 \item \code{waiver()} for the default labels computed by the
 transformation object
 \item A character vector giving labels (must be same length as \code{breaks})
+\item An expression vector (must be the same length as breaks). See ?plotmath for details.
 \item A function that takes the breaks as input and returns labels
-as output
+as output. Also accepts rlang \link[rlang:as_function]{lambda} function
+notation.
 }}
 
-\item{limits}{A numeric vector of length two providing limits of the scale.
-Use \code{NA} to refer to the existing minimum or maximum.}
+\item{limits}{One of:
+\itemize{
+\item \code{NULL} to use the default scale range
+\item A numeric vector of length two providing limits of the scale.
+Use \code{NA} to refer to the existing minimum or maximum
+\item A function that accepts the existing (automatic) limits and returns
+new limits. Also accepts rlang \link[rlang:as_function]{lambda} function
+notation.
+Note that setting limits on positional scales will \strong{remove} data outside of the limits.
+If the purpose is to zoom, use the limit argument in the coordinate system
+(see \code{\link[ggplot2:coord_cartesian]{coord_cartesian()}}).
+}}
 
 \item{expand}{Vector of range expansion constants used to add some
 padding around the data, to ensure that they are placed some distance
 away from the axes. Use the convenience function \code{ggplot2::expand_scale()}
 to generate the values for the \code{expand} argument. The defaults are to
-expand the scale by 5\% on each side for continuous variables, and by
+expand the scale by 5\\% on each side for continuous variables, and by
 0.6 units on each side for discrete variables.}
 
-\item{oob}{Function that handles limits outside of the scale limits
-(out of bounds). The default replaces out of bounds values with NA.}
+\item{oob}{One of:
+\itemize{
+\item Function that handles limits outside of the scale limits
+(out of bounds). Also accepts rlang \link[rlang:as_function]{lambda}
+function notation.
+\item The default (\code{\link[scales:oob]{scales::censor()}}) replaces out of
+bounds values with \code{NA}.
+\item \code{\link[scales:oob]{scales::squish()}} for squishing out of bounds values into range.
+\item \code{\link[scales:oob]{scales::squish_infinite()}} for squishing infinite values into range.
+}}
 
 \item{na.value}{Missing values will be replaced with this value.}
 
-\item{position}{The position of the axis. "left" or "right" for vertical
-scales, "top" or "bottom" for horizontal scales}
+\item{position}{For position scales, The position of the axis.
+\code{left} or \code{right} for y axes, \code{top} or \code{bottom} for x axes.}
 
 \item{time_wrap}{duration (in seconds) used to wrap the labels of the time axis}
 
 \item{unit}{the name of unit (string) to be used in the label (e.g. one could use \code{"second"} instead of \code{"s"})}
 
 \item{log}{logical, whether axis should be on a log-transformed}
+}
+\value{
+A ggplot scale.
 }
 \description{
 A set of scales used to represent experimental durations.
@@ -135,6 +218,6 @@ pl + scale_x_seconds(breaks = hours(1:4))
 \seealso{
 \itemize{
 \item \link{ggetho} to generate a plot object
-\item \link[ggplot2:scale_x_continuous]{ggplot2::scale_x_continuous}, the defaut ggplot scale, to understand limits, breaks, labels and name
+\item \link[ggplot2:scale_continuous]{ggplot2::scale_x_continuous}, the defaut ggplot scale, to understand limits, breaks, labels and name
 }
 }

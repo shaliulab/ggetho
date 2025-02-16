@@ -1,6 +1,8 @@
 #' @noRd
 id_wrap <- function(x){
-  stringr::str_replace_all(x, "\\|", "\n")
+
+  gsub(x = x, pattern = "\\|", replacement = "\n")
+  #stringr::str_replace_all(x, "\\|", "\n")
 }
 
 NULL
@@ -25,8 +27,3 @@ NULL
 #'
 #' @export
 id_labeller <- ggplot2::labeller(.default = id_wrap)
-
-
-
-
-

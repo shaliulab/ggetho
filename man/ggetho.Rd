@@ -4,9 +4,17 @@
 \alias{ggetho}
 \title{Prepare a ggplot object to represent behavioural data}
 \usage{
-ggetho(data, mapping, summary_FUN = mean,
-  summary_time_window = mins(30), time_wrap = NULL, time_offset = 0,
-  multiplot = NULL, multiplot_period = hours(24), ...)
+ggetho(
+  data,
+  mapping,
+  summary_FUN = mean,
+  summary_time_window = mins(30),
+  time_wrap = NULL,
+  time_offset = 0,
+  multiplot = NULL,
+  multiplot_period = hours(24),
+  ...
+)
 }
 \arguments{
 \item{data}{\link[behavr:behavr]{behavr::behavr} table containing the data and metadata}
@@ -28,7 +36,7 @@ ggetho(data, mapping, summary_FUN = mean,
 \item{...}{additional arguments to be passed to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}}
 }
 \value{
-An initial plot object that can be further edited.
+An initial ggplot object that can be further edited.
 }
 \description{
 This function summarises a variable of interest (y or z axis)

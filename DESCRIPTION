@@ -14,7 +14,6 @@ Depends:
     behavr
 Imports:
     data.table,
-    stringr,
     scales,
     labeling,
     rlang
@@ -28,5 +27,5 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/rethomics/ggetho
 BugReports: https://github.com/rethomics/ggetho/issues
-RoxygenNote: 6.1.1
+RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)

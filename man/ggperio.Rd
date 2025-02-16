@@ -13,6 +13,9 @@ ggperio(data, mapping = aes(x = period, y = power), ...)
 
 \item{...}{additional arguments to be passed to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}}
 }
+\value{
+An initial ggplot object that can be further edited.
+}
 \description{
 This function summarises periodogram data (containing periodograms of multiple individual),
 to show period on the \code{x} axis, and power (or equivalent) on the \code{y} axis.
@@ -51,5 +54,6 @@ out +  stat_pop_etho() + facet_wrap( ~ id, labeller = id_labeller)
 \item \link{ggetho} to plot time series
 \item \link{geom_peak} to draw peaks on a periodogram
 \item \link[zeitgebr:periodogram]{zeitgebr::periodogram} to compute periodograms in a first place
+\item \link{ggspectro} to visualise spectrograms
 }
 }
